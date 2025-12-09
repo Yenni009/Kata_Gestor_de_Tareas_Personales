@@ -23,7 +23,7 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:5000/api/auth/login", {
+      const res = await fetch("https://kata-gestor-de-tareas-personales.onrender.com/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -32,14 +32,12 @@ const Login = () => {
       const data = await res.json();
       if (!res.ok) throw new Error(data.msg || "Error en el login");
 
-      
       localStorage.setItem("token", data.token);
 
       setMessage("Inicio de sesión exitoso");
       setError(false);
       setFormData({ email: "", password: "" });
 
-      // Redirigir a página protegida 
       navigate("/tasks");
     } catch (err) {
       setMessage(err.message);
@@ -58,9 +56,7 @@ const Login = () => {
       <header className="navbar">
         <div className="logo">To-Do Pixel.</div>
         <nav className="nav-links">
-          <button className="btn-back" onClick={handleBack}>
-            Volver
-          </button>
+          <button className="btn-back" onClick={handleBack}>Volver</button>
         </nav>
       </header>
 
@@ -118,4 +114,3 @@ const Login = () => {
 };
 
 export default Login;
-

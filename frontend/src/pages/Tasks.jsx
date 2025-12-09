@@ -15,12 +15,14 @@ const Tasks = () => {
   const [filterStatus, setFilterStatus] = useState("all");
   const [filterPriority, setFilterPriority] = useState("all");
 
+  const API_URL = "https://kata-gestor-de-tareas-personales.onrender.com/api/tasks";
+
   // Cargar tareas al inicio
   useEffect(() => {
     const fetchTasks = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch("http://localhost:5000/api/tasks", {
+        const res = await fetch(API_URL, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error("Error al obtener tareas");
@@ -43,7 +45,6 @@ const Tasks = () => {
     try {
       const token = localStorage.getItem("token");
 
-      // Normalizar datos antes de enviar
       const payload = {
         title: task.title,
         description: task.description,
@@ -54,24 +55,23 @@ const Tasks = () => {
       let res;
       if (editingTask) {
         // EDITAR
-        res = await fetch(
-          `http://localhost:5000/api/tasks/${editingTask._id}`,
-          {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify(payload),
-          }
-        );
+        res = await fetch(`${API_URL}/${editingTask._id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(payload),
+        });
+
         if (!res.ok) throw new Error("Error al actualizar tarea");
+
         const updatedTask = await res.json();
         setTasks(tasks.map((t) => (t._id === updatedTask._id ? updatedTask : t)));
         setEditingTask(null);
       } else {
         // CREAR
-        res = await fetch("http://localhost:5000/api/tasks", {
+        res = await fetch(API_URL, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -79,15 +79,17 @@ const Tasks = () => {
           },
           body: JSON.stringify(payload),
         });
+
         if (!res.ok) throw new Error("Error al guardar tarea");
+
         const newTask = await res.json();
-        setTasks([newTask, ...tasks]); // agregar al inicio
+        setTasks([newTask, ...tasks]);
       }
 
       setShowForm(false);
     } catch (err) {
       console.error(err);
-      alert(err.message); // Para ver el error en frontend
+      alert(err.message);
     }
   };
 
@@ -101,11 +103,13 @@ const Tasks = () => {
   const handleDelete = async (id) => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:5000/api/tasks/${id}`, {
+      const res = await fetch(`${API_URL}/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
+
       if (!res.ok) throw new Error("Error al eliminar tarea");
+
       setTasks(tasks.filter((task) => task._id !== id));
     } catch (err) {
       console.error(err);
@@ -147,12 +151,14 @@ const Tasks = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
+
           <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
             <option value="all">Todas</option>
             <option value="pendiente">Pendientes</option>
             <option value="en progreso">En progreso</option>
             <option value="completada">Completadas</option>
           </select>
+
           <select value={filterPriority} onChange={(e) => setFilterPriority(e.target.value)}>
             <option value="all">Todas las prioridades</option>
             <option value="alta">Alta</option>
@@ -186,10 +192,3 @@ const Tasks = () => {
 };
 
 export default Tasks;
-
-
-
-
-
-
-

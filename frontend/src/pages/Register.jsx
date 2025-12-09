@@ -26,7 +26,7 @@ const Register = () => {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:5000/api/auth/register", {
+      const res = await fetch("https://kata-gestor-de-tareas-personales.onrender.com/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -36,11 +36,10 @@ const Register = () => {
 
       if (!res.ok) throw new Error(data.msg || "Error en el registro");
 
-      setMessage(" Registro exitoso, redirigiendo...");
+      setMessage("Registro exitoso, redirigiendo...");
       setError(false);
       setFormData({ name: "", email: "", password: "" });
 
-      
       setTimeout(() => {
         navigate("/login");
       }, 1000);
@@ -54,11 +53,11 @@ const Register = () => {
   };
 
   const handleBack = () => {
-    navigate("/"); // Redirige a Home
+    navigate("/");
   };
 
   const handleLogin = () => {
-    navigate("/login"); // Redirige a Login
+    navigate("/login");
   };
 
   return (
@@ -131,6 +130,7 @@ const Register = () => {
 };
 
 export default Register;
+
 
 
 
